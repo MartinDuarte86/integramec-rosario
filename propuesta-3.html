@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IntegraMec Rosario — Potencia Industrial desde 1983</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;1,700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #0e0e0e;
+      --s1:     #161616;
+      --orange: #f97316;
+      --yellow: #fbbf24;
+      --ease:   cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    body {
+      background: var(--bg);
+      font-family: 'Barlow', sans-serif;
+      color: #a1a1a1;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .display { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; line-height: 0.88; letter-spacing: -0.01em; }
+    .label   { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+
+    /* ── Animated stripe bg ─── */
+    .stripe-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: repeating-linear-gradient(-45deg, transparent, transparent 40px, rgba(249,115,22,0.025) 40px, rgba(249,115,22,0.025) 41px);
+    }
+
+    /* ── Orange accent bar ──── */
+    .accent-bar {
+      height: 2px;
+      background: linear-gradient(90deg, #f97316 0%, #fbbf24 50%, transparent 100%);
+    }
+
+    /* ── Nav ───────────────── */
+    .nav-wrap {
+      background: rgba(14,14,14,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      position: sticky; top: 0; z-index: 50;
+    }
+
+    /* ── Hero diagonal ──────── */
+    .hero-clip {
+      clip-path: polygon(0 0, 100% 0, 100% 92%, 0 100%);
+      min-height: 100dvh;
+      position: relative;
+      overflow: hidden;
+      background: #0a0a0a;
+      display: flex; align-items: center;
+    }
+
+    /* ── Buttons ────────────── */
+    .btn-fire {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      background: linear-gradient(135deg, var(--orange), #dc2626);
+      color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+      font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.9rem 2rem; border-radius: 0;
+      transition: all 0.4s var(--ease); text-decoration: none;
+    }
+    .btn-fire:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(249,115,22,0.4); }
+    .btn-fire:active { transform: scale(0.97); }
+
+    .btn-outline {
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(255,255,255,0.15); color: #6b7280;
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+      font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.9rem 2rem; border-radius: 0;
+      background: transparent; transition: all 0.35s var(--ease); text-decoration: none;
+    }
+    .btn-outline:hover { border-color: var(--orange); color: var(--orange); }
+
+    /* ── Stats strip ────────── */
+    .stats-strip { background: var(--orange); }
+
+    /* ── Service row ─────────── */
+    .svc-row {
+      border-left: 3px solid var(--orange);
+      padding: 2rem 1.75rem 2rem 2rem;
+      background: rgba(255,255,255,0.01);
+      transition: background 0.3s var(--ease), transform 0.3s var(--ease);
+    }
+    .svc-row:hover { background: rgba(249,115,22,0.04); transform: translateX(6px); }
+    .svc-row-inactive { border-left-color: rgba(249,115,22,0.2); }
+
+    /* ── Scroll reveal ──────── */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.85s var(--ease), transform 0.85s var(--ease);
+    }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.08s; }
+    .d2 { transition-delay: 0.16s; }
+    .d3 { transition-delay: 0.24s; }
+
+    /* ── Scrollbar hide ──────── */
+    ::-webkit-scrollbar { display: none; }
+    * { scrollbar-width: none; }
+
+    /* ── Number big ──────────── */
+    .num-big { font-family:'Barlow Condensed',sans-serif; font-weight:800; }
+
+    /* ── Geometric corner ────── */
+    .corner-tl::before { content:''; position:absolute; top:1.5rem; right:1.5rem; width:48px; height:48px; border-top:1.5px solid rgba(249,115,22,0.2); border-right:1.5px solid rgba(249,115,22,0.2); pointer-events:none; }
+    .corner-br::after  { content:''; position:absolute; bottom:1.5rem; left:1.5rem; width:48px; height:48px; border-bottom:1.5px solid rgba(249,115,22,0.2); border-left:1.5px solid rgba(249,115,22,0.2); pointer-events:none; }
+  </style>
+</head>
+<body>
+
+  <div class="stripe-bg" aria-hidden="true"></div>
+
+  <!-- Accent bar -->
+  <div class="accent-bar"></div>
+
+  <!-- ── Navbar ──────────────────────────────────── -->
+  <nav class="nav-wrap">
+    <div style="max-width:1280px;margin:0 auto;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+      <div style="display:flex;align-items:center;gap:0.875rem;">
+        <div style="background:var(--orange);width:42px;height:42px;display:flex;align-items:center;justify-content:center;clip-path:polygon(0 0, 92% 0, 100% 100%, 8% 100%);flex-shrink:0;">
+          <span class="display" style="color:#fff;font-size:14px;">IM</span>
+        </div>
+        <div>
+          <p class="display" style="color:#fff;font-size:1.25rem;line-height:1;">INTEGRAMEC ROSARIO</p>
+          <p class="label" style="color:var(--orange);font-size:10px;margin-top:3px;letter-spacing:0.25em;">Ingeniería Electromecánica — SRL</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:2rem;">
+        <a href="#servicios" style="font-size:11px;color:#4b5563;text-decoration:none;letter-spacing:0.2em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:600;transition:color 0.2s;" onmouseover="this.style.color='#f97316'" onmouseout="this.style.color='#4b5563'">Servicios</a>
+        <a href="#empresa" style="font-size:11px;color:#4b5563;text-decoration:none;letter-spacing:0.2em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:600;transition:color 0.2s;" onmouseover="this.style.color='#f97316'" onmouseout="this.style.color='#4b5563'">Empresa</a>
+        <a href="#contacto" style="font-size:11px;color:#4b5563;text-decoration:none;letter-spacing:0.2em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:600;transition:color 0.2s;" onmouseover="this.style.color='#f97316'" onmouseout="this.style.color='#4b5563'">Contacto</a>
+      </div>
+      <a href="#contacto" class="btn-fire" style="font-size:13px;padding:0.65rem 1.5rem;">PRESUPUESTO →</a>
+    </div>
+  </nav>
+
+  <!-- ── Hero ────────────────────────────────────── -->
+  <section class="hero-clip">
+    <!-- bg texture layers -->
+    <img src="img/hero.jpg" alt="" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.07;" onerror="this.style.display='none'" />
+    <div style="position:absolute;inset:0;background:linear-gradient(130deg,rgba(14,14,14,0.98) 0%,rgba(14,14,14,0.85) 55%,rgba(14,14,14,0.65) 100%);"></div>
+    <!-- corner accent right -->
+    <div aria-hidden="true" style="position:absolute;top:2rem;right:2.5rem;width:90px;height:90px;border-top:2px solid rgba(249,115,22,0.18);border-right:2px solid rgba(249,115,22,0.18);"></div>
+    <div aria-hidden="true" style="position:absolute;bottom:6rem;left:2.5rem;width:60px;height:60px;border-bottom:2px solid rgba(249,115,22,0.12);border-left:2px solid rgba(249,115,22,0.12);"></div>
+
+    <div style="position:relative;z-index:10;max-width:1280px;margin:0 auto;padding:6rem 1.5rem;width:100%;">
+      <div style="max-width:860px;">
+        <div class="reveal" style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;">
+          <div style="width:52px;height:1.5px;background:var(--orange);"></div>
+          <span style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;color:var(--orange);letter-spacing:0.3em;text-transform:uppercase;">Rosario, Argentina · Desde 1983</span>
+        </div>
+
+        <h1 class="display reveal d1" style="font-size:clamp(4rem,14vw,9.5rem);color:#fff;margin-bottom:0.1em;">INGENIERÍA</h1>
+        <h1 class="display reveal d2" style="font-size:clamp(4rem,14vw,9.5rem);margin-bottom:0.1em;-webkit-text-stroke:2px var(--orange);color:transparent;">ELECTRO&shy;MECÁNICA</h1>
+        <h1 class="display reveal d3" style="font-size:clamp(4rem,14vw,9.5rem);color:#fff;margin-bottom:2.5rem;">INDUSTRIAL</h1>
+
+        <p class="reveal d2" style="font-size:clamp(1rem,2.5vw,1.25rem);color:#4b5563;max-width:580px;line-height:1.7;margin-bottom:3rem;">
+          Potencia. Precisión. Resultados. Soluciones mecatrónicas para el sector energético, agroindustrial y público, respaldadas por patentes INPI y cuatro décadas de trayectoria comprobada.
+        </p>
+
+        <div class="reveal d3" style="display:flex;flex-wrap:wrap;gap:0.875rem;">
+          <a href="#contacto" class="btn-fire">ESCRIBIR POR WHATSAPP</a>
+          <a href="#servicios" class="btn-outline">VER SERVICIOS</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Stats Strip ──────────────────────────────── -->
+  <div class="stats-strip">
+    <div style="max-width:1280px;margin:0 auto;padding:1.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1rem;text-align:center;">
+      <div><p class="num-big" style="font-size:2.5rem;color:#fff;">40+</p><p class="label" style="font-size:10px;color:rgba(255,255,255,0.7);margin-top:0.25rem;">Años en el sector</p></div>
+      <div><p class="num-big" style="font-size:2.5rem;color:#fff;">INPI</p><p class="label" style="font-size:10px;color:rgba(255,255,255,0.7);margin-top:0.25rem;">Reg. 9 · 37 · 42</p></div>
+      <div><p class="num-big" style="font-size:2.5rem;color:#fff;">4</p><p class="label" style="font-size:10px;color:rgba(255,255,255,0.7);margin-top:0.25rem;">Servicios especializados</p></div>
+      <div><p class="num-big" style="font-size:2.5rem;color:#fff;">1983</p><p class="label" style="font-size:10px;color:rgba(255,255,255,0.7);margin-top:0.25rem;">Año de fundación</p></div>
+    </div>
+  </div>
+
+  <!-- ── Servicios ────────────────────────────────── -->
+  <section id="servicios" style="padding:6rem 1.5rem;background:var(--s1);">
+    <div style="max-width:1280px;margin:0 auto;">
+      <div class="reveal" style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:4rem;gap:2rem;flex-wrap:wrap;">
+        <div>
+          <p style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;color:var(--orange);letter-spacing:0.3em;text-transform:uppercase;margin-bottom:0.5rem;">// Nuestros servicios</p>
+          <h2 class="display" style="font-size:clamp(3rem,8vw,5.5rem);color:#fff;">LO QUE<br/>HACEMOS</h2>
+        </div>
+        <div aria-hidden="true" style="width:72px;height:72px;border:1.5px solid rgba(249,115,22,0.25);transform:rotate(45deg);flex-shrink:0;margin-bottom:1rem;"></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;">
+
+        <div class="svc-row corner-tl corner-br reveal" style="position:relative;">
+          <div style="display:flex;gap:1.25rem;align-items:flex-start;">
+            <span class="num-big" style="font-size:4rem;color:rgba(249,115,22,0.15);line-height:1;flex-shrink:0;">01</span>
+            <div style="flex:1;">
+              <div style="height:9rem;border-radius:0.5rem;overflow:hidden;background:#1a1a1a;margin-bottom:1rem;">
+                <img src="img/servicio1.jpg" alt="Equipos" style="width:100%;height:100%;object-fit:cover;opacity:0.45;transition:opacity 0.4s;" onerror="this.parentElement.style.background='#1f1f1f'" />
+              </div>
+              <h3 class="label" style="font-size:1.0625rem;color:#fff;margin-bottom:0.5rem;">Diseño y Construcción de Equipos</h3>
+              <p style="font-size:0.875rem;color:#4b5563;line-height:1.65;">Equipos electromecánicos mecatrónicos industriales con patentes propias registradas en el INPI.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="svc-row reveal d1" style="position:relative;">
+          <div style="display:flex;gap:1.25rem;align-items:flex-start;">
+            <span class="num-big" style="font-size:4rem;color:rgba(249,115,22,0.15);line-height:1;flex-shrink:0;">02</span>
+            <div style="flex:1;">
+              <div style="height:9rem;border-radius:0.5rem;overflow:hidden;background:#1a1a1a;margin-bottom:1rem;">
+                <img src="img/servicio2.jpg" alt="Bombas" style="width:100%;height:100%;object-fit:cover;opacity:0.45;" onerror="this.parentElement.style.background='#1f1f1f'" />
+              </div>
+              <h3 class="label" style="font-size:1.0625rem;color:#fff;margin-bottom:0.5rem;">Bombas Sumergibles — Serv. Técnico</h3>
+              <p style="font-size:0.875rem;color:#4b5563;line-height:1.65;">Servicio técnico especializado en bombas sumergibles de gran tamaño para uso industrial de alta demanda.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="svc-row reveal d2" style="position:relative;">
+          <div style="display:flex;gap:1.25rem;align-items:flex-start;">
+            <span class="num-big" style="font-size:4rem;color:rgba(249,115,22,0.15);line-height:1;flex-shrink:0;">03</span>
+            <div style="flex:1;">
+              <div style="height:9rem;border-radius:0.5rem;overflow:hidden;background:#1a1a1a;margin-bottom:1rem;">
+                <img src="img/servicio3.jpg" alt="Grúas" style="width:100%;height:100%;object-fit:cover;opacity:0.45;" onerror="this.parentElement.style.background='#1f1f1f'" />
+              </div>
+              <h3 class="label" style="font-size:1.0625rem;color:#fff;margin-bottom:0.5rem;">Cabezales Mecanizados para Grúas</h3>
+              <p style="font-size:0.875rem;color:#4b5563;line-height:1.65;">Fabricación de cabezales mecanizados a control remoto para adaptar a grúas industriales.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="svc-row reveal d1" style="position:relative;border-left-color:var(--orange);background:rgba(249,115,22,0.04);">
+          <div style="display:flex;gap:1.25rem;align-items:flex-start;">
+            <span class="num-big" style="font-size:4rem;color:rgba(249,115,22,0.3);line-height:1;flex-shrink:0;">04</span>
+            <div style="flex:1;">
+              <div style="height:9rem;border-radius:0.5rem;overflow:hidden;background:#1a1a1a;margin-bottom:1rem;">
+                <img src="img/servicio4.jpg" alt="Puesta a tierra" style="width:100%;height:100%;object-fit:cover;opacity:0.45;" onerror="this.parentElement.style.background='#1f1f1f'" />
+              </div>
+              <h3 class="label" style="font-size:1.0625rem;color:var(--orange);margin-bottom:0.5rem;">Aislación Dieléctrica y Puesta a Tierra</h3>
+              <p style="font-size:0.875rem;color:#4b5563;line-height:1.65;">Estudios sobre aislación dieléctrica, pararrayos y puesta a tierra para infraestructura eléctrica.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Empresa ──────────────────────────────────── -->
+  <section id="empresa" style="position:relative;overflow:hidden;padding:6rem 1.5rem;background:var(--bg);">
+    <div class="stripe-bg" aria-hidden="true" style="opacity:0.5;"></div>
+    <div aria-hidden="true" style="position:absolute;top:2rem;right:2.5rem;width:100px;height:100px;border-top:1.5px solid rgba(249,115,22,0.1);border-right:1.5px solid rgba(249,115,22,0.1);"></div>
+    <div style="max-width:1280px;margin:0 auto;position:relative;z-index:1;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:5rem;align-items:center;">
+        <div class="reveal" style="position:relative;">
+          <div aria-hidden="true" style="position:absolute;top:-16px;left:-16px;width:100%;height:100%;border:1.5px solid rgba(249,115,22,0.08);border-radius:4px;"></div>
+          <div style="border-radius:4px;overflow:hidden;background:#1a1a1a;height:22rem;">
+            <img src="img/hero.jpg" alt="IntegraMec" style="width:100%;height:100%;object-fit:cover;opacity:0.38;" onerror="this.style.background='#1f1f1f'" />
+          </div>
+          <div style="position:absolute;bottom:-1rem;left:1.5rem;background:var(--orange);padding:0.875rem 1.5rem;">
+            <p class="label" style="color:#fff;font-size:13px;letter-spacing:0.2em;">EST. 1983 · ROSARIO</p>
+          </div>
+        </div>
+        <div class="reveal d2">
+          <p style="font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--orange);letter-spacing:0.3em;text-transform:uppercase;margin-bottom:1rem;">// La empresa</p>
+          <h2 class="display" style="font-size:clamp(2.5rem,7vw,4.5rem);color:#fff;margin-bottom:1.5rem;">CUATRO DÉCADAS DE POTENCIA INDUSTRIAL</h2>
+          <p style="font-size:0.9375rem;color:#4b5563;line-height:1.75;margin-bottom:1rem;">
+            Desde 1983, IntegraMec Rosario SRL da soluciones al sector electromecánico mecatrónico en actividades pública y privada, bajo registros nacionales del INPI categorías 9, 37 y 42.
+          </p>
+          <p style="font-size:0.9375rem;color:#4b5563;line-height:1.75;margin-bottom:2.5rem;">
+            Empresas distribuidoras de energía, municipalidades, gobiernos provinciales, plantas cerealeras y sector privado.
+          </p>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.875rem;">
+            <div style="border:1px solid rgba(249,115,22,0.18);padding:1rem;text-align:center;border-radius:4px;">
+              <p class="num-big" style="font-size:1.875rem;color:var(--orange);">40+</p>
+              <p class="label" style="font-size:9px;color:#374151;margin-top:0.25rem;">Años</p>
+            </div>
+            <div style="border:1px solid rgba(249,115,22,0.18);padding:1rem;text-align:center;border-radius:4px;">
+              <p class="num-big" style="font-size:1.875rem;color:var(--orange);">INPI</p>
+              <p class="label" style="font-size:9px;color:#374151;margin-top:0.25rem;">Patentes</p>
+            </div>
+            <div style="border:1px solid rgba(249,115,22,0.18);padding:1rem;text-align:center;border-radius:4px;">
+              <p class="num-big" style="font-size:1.875rem;color:var(--orange);">360°</p>
+              <p class="label" style="font-size:9px;color:#374151;margin-top:0.25rem;">Soluciones</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Contacto ─────────────────────────────────── -->
+  <section id="contacto" style="padding:6rem 1.5rem;background:var(--s1);">
+    <div style="max-width:1280px;margin:0 auto;text-align:center;">
+      <p class="reveal" style="font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--orange);letter-spacing:0.3em;text-transform:uppercase;margin-bottom:1rem;">// Contacto directo</p>
+      <h2 class="display reveal d1" style="font-size:clamp(3rem,9vw,6rem);color:#fff;margin-bottom:1.25rem;">HABLEMOS DE<br/>TU PROYECTO</h2>
+      <div class="reveal d2" style="width:80px;height:2px;background:linear-gradient(90deg,var(--orange),var(--yellow));margin:0 auto 3.5rem;"></div>
+
+      <div class="reveal d3" style="max-width:480px;margin:0 auto;border:1px solid rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;">
+        <div style="background:var(--orange);padding:0.875rem 1.5rem;">
+          <p class="label" style="color:#fff;font-size:12px;letter-spacing:0.25em;">CANALES DE CONTACTO</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.02);padding:2rem;display:flex;flex-direction:column;gap:1.25rem;">
+          <a href="https://wa.me/5493400000000" style="display:flex;align-items:center;gap:1rem;text-decoration:none;padding:0.5rem;border-radius:4px;transition:background 0.25s;" onmouseover="this.style.background='rgba(249,115,22,0.06)'" onmouseout="this.style.background='transparent'">
+            <div style="width:44px;height:44px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.18);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="22" height="22" fill="#4ade80" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.862L.073 23.927l6.264-1.443A11.942 11.942 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.853 0-3.587-.502-5.084-1.375l-.363-.214-3.726.858.876-3.633-.235-.374A9.953 9.953 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+            </div>
+            <div style="flex:1;text-align:left;">
+              <p class="label" style="color:#fff;font-size:14px;">WHATSAPP</p>
+              <p style="font-size:0.8125rem;color:#374151;margin-top:2px;">Respuesta inmediata</p>
+            </div>
+            <svg width="16" height="16" fill="none" stroke="var(--orange)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          </a>
+
+          <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+
+          <a href="mailto:integramec@email.com" style="display:flex;align-items:center;gap:1rem;text-decoration:none;padding:0.5rem;border-radius:4px;transition:background 0.25s;" onmouseover="this.style.background='rgba(249,115,22,0.06)'" onmouseout="this.style.background='transparent'">
+            <div style="width:44px;height:44px;background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.18);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="20" height="20" fill="none" stroke="var(--orange)" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+            <div style="flex:1;text-align:left;">
+              <p class="label" style="color:#fff;font-size:14px;">EMAIL</p>
+              <p style="font-size:0.8125rem;color:#374151;margin-top:2px;">integramec@email.com</p>
+            </div>
+            <svg width="16" height="16" fill="none" stroke="var(--orange)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          </a>
+
+          <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+
+          <div style="display:flex;gap:0.75rem;">
+            <a href="#" style="flex:1;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.07);padding:0.75rem;color:#374151;text-decoration:none;font-size:0.875rem;border-radius:4px;transition:all 0.25s;" onmouseover="this.style.borderColor='rgba(249,115,22,0.4)';this.style.color='var(--orange)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)';this.style.color='#374151'">Instagram</a>
+            <a href="#" style="flex:1;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.07);padding:0.75rem;color:#374151;text-decoration:none;font-size:0.875rem;border-radius:4px;transition:all 0.25s;" onmouseover="this.style.borderColor='rgba(249,115,22,0.4)';this.style.color='var(--orange)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)';this.style.color='#374151'">Facebook</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <div class="accent-bar"></div>
+  <footer style="background:#0a0a0a;padding:2.25rem 1.5rem;">
+    <div style="max-width:1280px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;">
+      <div style="display:flex;align-items:center;gap:0.75rem;">
+        <div style="background:var(--orange);width:32px;height:32px;display:flex;align-items:center;justify-content:center;clip-path:polygon(0 0, 92% 0, 100% 100%, 8% 100%);flex-shrink:0;">
+          <span class="display" style="color:#fff;font-size:11px;">IM</span>
+        </div>
+        <div>
+          <p class="label" style="color:#fff;font-size:12px;letter-spacing:0.15em;">INTEGRAMEC ROSARIO SRL</p>
+          <p style="font-size:11px;color:#374151;margin-top:2px;">Ingeniería Electromecánica Industrial · Desde 1983</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:1.25rem;">
+        <a href="index.html" style="font-size:11px;color:#374151;text-decoration:none;text-transform:uppercase;letter-spacing:0.15em;" onmouseover="this.style.color='#6b7280'" onmouseout="this.style.color='#374151'">← Hub</a>
+        <p style="font-size:11px;color:#1f1f1f;text-transform:uppercase;letter-spacing:0.15em;">© 2026</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const io = new IntersectionObserver(
+      e => e.forEach(x => { if (x.isIntersecting) x.target.classList.add('in'); }),
+      { threshold: 0.08, rootMargin: '0px 0px -30px 0px' }
+    );
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  </script>
+</body>
+</html>
